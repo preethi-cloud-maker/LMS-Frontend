@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Materials</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+<div class="sidebar">
+<h2>LMS</h2>
+<a href="dashboard.html">Dashboard</a>
+<a href="courses.html">Courses</a>
+<a href="materials.html">Materials</a>
+<a href="profile.html">Profile</a>
+</div>
+
+<div class="main">
+
+<h1>Study Materials</h1>
+
+<input type="text" id="mat" placeholder="Enter notes or links">
+<button onclick="add()">Add</button>
+
+<div id="list"></div>
+
+</div>
+
+</div>
+
+<script>
+function add(){
+let val=document.getElementById("mat").value;
+
+let arr=JSON.parse(localStorage.getItem("materials"))||[];
+arr.push(val);
+
+localStorage.setItem("materials",JSON.stringify(arr));
+load();
+}
+
+function load(){
+let arr=JSON.parse(localStorage.getItem("materials"))||[];
+let div=document.getElementById("list");
+
+div.innerHTML="";
+arr.forEach(m=>{
+div.innerHTML+=`<div class="card">${m}</div>`;
+});
+}
+
+load();
+</script>
+
+</body>
+</html>
