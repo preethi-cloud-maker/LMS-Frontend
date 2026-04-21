@@ -31,13 +31,8 @@
 </div>
 
 <script>
-let user = localStorage.getItem("currentUser");
-
-// Fix for GitHub (avoid null)
-if(!user){
-    user = "Guest";
-}
-document.getElementById("name").innerText = user;
+let user=localStorage.getItem("currentUser");
+document.getElementById("name").innerText=user;
 
 // quotes
 let quotes=[
@@ -47,21 +42,21 @@ let quotes=[
 "Never stop learning ✨"
 ];
 
-document.getElementById("quote").innerText =
+document.getElementById("quote").innerText=
 quotes[Math.floor(Math.random()*quotes.length)];
 
 // courses per user
-let data = JSON.parse(localStorage.getItem("userCourses")) || {};
-let list = data[user] || [];
+let data=JSON.parse(localStorage.getItem("userCourses"))||{};
+let list=data[user]||[];
 
-let div = document.getElementById("courses");
+let div=document.getElementById("courses");
 
-if(list.length === 0){
-    div.innerHTML = "<p>No courses selected</p>";
+if(list.length===0){
+div.innerHTML="<p>No courses selected</p>";
 }else{
-    list.forEach(c => {
-        div.innerHTML += `<div class="card">📘 ${c}</div>`;
-    });
+list.forEach(c=>{
+div.innerHTML+=`<div class="card">📘 ${c}</div>`;
+});
 }
 </script>
 
