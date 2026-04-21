@@ -20,7 +20,18 @@
 
 <h1>Study Materials</h1>
 
-<input type="text" id="mat" placeholder="Enter notes or links">
+<!-- ✅ Course Selection -->
+<select id="course" onchange="load()">
+  <option value="">Select Course</option>
+  <option value="Maths">Maths</option>
+  <option value="DBMS">DBMS</option>
+  <option value="Networks">Networks</option>
+  <option value="Electronics">Electronics</option>
+</select>
+
+<!-- ✅ Paste PDF link -->
+<input type="text" id="mat" placeholder="Paste PDF link here">
+
 <button onclick="add()">Add</button>
 
 <div id="list"></div>
@@ -30,27 +41,61 @@
 </div>
 
 <script>
+
 function add(){
-let val=document.getElementById("mat").value;
+  let course = document.getElementById("course").value;
+  let val = document.getElementById("mat").value;
 
-let arr=JSON.parse(localStorage.getItem("materials"))||[];
-arr.push(val);
+  if(course === "" || val === ""){
+    alert("Select course and paste PDF link");
+    return;
+  }
 
-localStorage.setItem("materials",JSON.stringify(arr));
-load();
+  let arr = JSON.parse(localStorage.getItem("materials")) || [];
+
+  // ✅ store course + pdf link
+  arr.push({course: course, pdf: val});
+
+  localStorage.setItem("materials", JSON.stringify(arr));
+
+  document.getElementById("mat").value = "";
+  load();
 }
 
 function load(){
-let arr=JSON.parse(localStorage.getItem("materials"))||[];
-let div=document.getElementById("list");
+  let selectedCourse = document.getElementById("course").value;
 
-div.innerHTML="";
-arr.forEach(m=>{
-div.innerHTML+=`<div class="card">${m}</div>`;
-});
+  let arr = JSON.parse(localStorage.getItem("materials")) || [];
+  let div = document.getElementById("list");
+
+  div.innerHTML = "";
+
+  if(selectedCourse === ""){
+    div.innerHTML = "<p>Please select a course</p>";
+    return;
+  }
+
+  arr.forEach(m => {
+
+    if(m.course === selectedCourse){
+
+     div.innerHTML += `
+  <div class="card pdf-card">
+    <div class="pdf-info">
+      📄 <b>${m.pdf}</b><br>
+      <small>${m.course}</small>
+    </div>
+
+    <a href="${m.pdf}" target="_blank" class="open-btn">Open</a>
+  </div>
+`;
+    }
+
+  });
 }
 
 load();
+
 </script>
 
 </body>
