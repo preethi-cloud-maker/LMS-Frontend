@@ -20,10 +20,14 @@
 
 <h1>Select Courses</h1>
 
-<div><input type="checkbox" value="Java"> Java</div>
-<div><input type="checkbox" value="DBMS"> DBMS</div>
-<div><input type="checkbox" value="CN"> Computer Networks</div>
-<div><input type="checkbox" value="AI"> AI</div>
+<!-- ✅ Add new course -->
+<input type="text" id="newCourse" placeholder="Enter new course">
+<button onclick="addCourse()">Add Course</button>
+
+<br><br>
+
+<!-- ✅ Course list -->
+<div id="courseList"></div>
 
 <button onclick="save()">Register</button>
 
@@ -32,20 +36,68 @@
 </div>
 
 <script>
-function save(){
-let arr=[];
-document.querySelectorAll("input[type=checkbox]:checked")
-.forEach(c=>arr.push(c.value));
 
-let user=localStorage.getItem("currentUser");
+// 🔹 Load courses
+function loadCourses(){
+  let courses = JSON.parse(localStorage.getItem("allCourses")) || 
+  ["Java","DBMS","CN","AI"];
 
-let all=JSON.parse(localStorage.getItem("userCourses"))||{};
-all[user]=arr;
+  let div = document.getElementById("courseList");
+  div.innerHTML = "";
 
-localStorage.setItem("userCourses",JSON.stringify(all));
-
-alert("Courses Registered 🎉");
+  courses.forEach(c => {
+    div.innerHTML += `
+      <div>
+        <input type="checkbox" value="${c}"> ${c}
+      </div>
+    `;
+  });
 }
+
+// 🔹 Add new course
+function addCourse(){
+  let newCourse = document.getElementById("newCourse").value.trim();
+
+  if(newCourse === ""){
+    alert("Enter course name");
+    return;
+  }
+
+  let courses = JSON.parse(localStorage.getItem("allCourses")) || 
+  ["Java","DBMS","CN","AI"];
+
+  // ❗ prevent duplicate
+  if(courses.includes(newCourse)){
+    alert("Course already exists");
+    return;
+  }
+
+  courses.push(newCourse);
+  localStorage.setItem("allCourses", JSON.stringify(courses));
+
+  document.getElementById("newCourse").value = "";
+  loadCourses();
+}
+
+// 🔹 Save selected courses
+function save(){
+  let arr = [];
+  document.querySelectorAll("input[type=checkbox]:checked")
+  .forEach(c => arr.push(c.value));
+
+  let user = localStorage.getItem("currentUser");
+
+  let all = JSON.parse(localStorage.getItem("userCourses")) || {};
+  all[user] = arr;
+
+  localStorage.setItem("userCourses", JSON.stringify(all));
+
+  alert("Courses Registered 🎉");
+}
+
+// load on page open
+loadCourses();
+
 </script>
 
 </body>
