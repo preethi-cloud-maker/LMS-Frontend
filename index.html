@@ -3,52 +3,119 @@
 <head>
 <title>Login</title>
 <link rel="stylesheet" href="style.css">
+
+<style>
+/* ✅ Toast Style (you can move to style.css later) */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #222;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  opacity: 0;
+  transition: 0.5s;
+  font-size: 14px;
+}
+.toast.show {
+  opacity: 1;
+}
+</style>
+
 </head>
 <body>
 
 <div class="login-container">
 
-<div class="login-left">
-<img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f">
-<h2>"Learn Today, Lead Tomorrow 🚀"</h2>
-</div>
+  <div class="login-left">
+    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f">
+    <h2>"Learn Today, Lead Tomorrow 🚀"</h2>
+  </div>
 
-<div class="login-box">
+  <div class="login-box">
+    <h2>Student Login</h2>
 
-<h2>Student Login</h2>
+    <form onsubmit="return loginUser(event)">
+      <input type="text" id="username" placeholder="Username" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
 
-<form onsubmit="return login(event)">
+    <!-- ✅ Toast message -->
+    <div id="toast" class="toast"></div>
 
-<input type="text" id="username" placeholder="Username" required>
-
-<input type="password" id="password" placeholder="Password" required>
-
-<button type="submit">Login</button>
-
-</form>
-
-</div>
+  </div>
 
 </div>
 
 <script>
-function login(event){
-event.preventDefault();
 
-let name=document.getElementById("username").value;
-let pass=document.getElementById("password").value;
+// ✅ Toast Function
+function showToast(message){
+  let toast = document.getElementById("toast");
+  toast.innerText = message;
+  toast.classList.add("show");
 
-// store current user
-localStorage.setItem("currentUser",name);
-
-// store all users
-let users=JSON.parse(localStorage.getItem("users"))||[];
-users.push({name:name,password:pass});
-localStorage.setItem("users",JSON.stringify(users));
-
-// redirect
-window.location.href="index.html";
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2500);
 }
+
+function loginUser(event){
+  event.preventDefault();
+
+  let name = document.getElementById("username").value.trim();
+  let pass = document.getElementById("password").value;
+  // 📧 Gmail validation
+if(!name.endsWith("@gmail.com")){
+  showToast("Enter valid Gmail ID ❌");
+  return false;
+}
+
+  // 🔐 Password length check
+  if(pass.length < 8){
+    showToast("Password must be at least 8 characters ❌");
+    return false;
+  }
+
+  // 🔐 Strong password check
+  const strongPassword = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/;
+  if(!strongPassword.test(pass)){
+    showToast("Use uppercase, number & special character ❌");
+    return false;
+  }
+
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+  let existingUser = users.find(user => user.name === name);
+
+  if(existingUser){
+    if(existingUser.password === pass){
+      localStorage.setItem("currentUser", name);
+      showToast("Login successful ✅");
+
+      setTimeout(()=>{
+        window.location.href = "dashboard.html";
+      },1500);
+
+    } else {
+      showToast("Incorrect password ❌");
+    }
+  } else {
+    users.push({name: name, password: pass});
+    localStorage.setItem("users", JSON.stringify(users));
+    localStorage.setItem("currentUser", name);
+
+    showToast("Registered & Logged in ✅");
+
+    setTimeout(()=>{
+      window.location.href = "dashboard.html";
+    },1500);
+  }
+
+  return false;
+}
+
 </script>
 
 </body>
